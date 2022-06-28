@@ -21,7 +21,7 @@ Edit the "inline_keyboards.js" file based on the types of bills
 Edit the "connection.js" file base on your database data
 
 ### bill
-Modify the "bill" folder by adding the various subfolders for each type of bill
+Add the "bills" folder to "bot" folder and then add the various subfolders for each type of bill
 
 ### database
 1. Create the database
