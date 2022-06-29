@@ -170,7 +170,7 @@ bot.action('shifts', (ctx) => {
         return 'anything'
     }
 
-    ctx.reply('Today ' + getName(totalDays) + " has to clean " + getRoom(totalDays))
+    ctx.reply(`Today ${getName(totalDays)} has to clean ${getRoom(totalDays)}`)
 })
 
 
@@ -208,7 +208,7 @@ bot.action('showProducts', (ctx) => {
             let str = 'List:'
 
             for (let i = 0; i < result.length; i++) {
-                str = str + '\n- ' + result[i].name + ': x' + result[i].quantity
+                str = `${str}\n- ${result[i].name}: x${result[i].quantity}`
             }
 
             ctx.reply(str)
