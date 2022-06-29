@@ -58,7 +58,7 @@ const inlineKeyboards = {
             [
                 {text: 'billType0', callback_data: 'addBillType0'},
                 ...
-            ] //insert all bills' types
+            ] //insert all bill types
         ]
     },
     removeBills: {
@@ -69,7 +69,7 @@ const inlineKeyboards = {
             [
                 {text: 'billType0', callback_data: 'removeBillType0'},
                 ...
-            ] //insert all bills' types
+            ] //insert all bill types
         ]
     },
     sureRemoveBill: {
@@ -91,7 +91,7 @@ const inlineKeyboards = {
             [
                 {text: 'billType0', callback_data: 'showBillType0'},
                 ...
-            ] //insert all bills' types
+            ] //insert all bill types
         ]
     }
 }
