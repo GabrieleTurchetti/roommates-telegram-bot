@@ -22,8 +22,6 @@ bot.start((ctx) => {
 
 bot.on('text', (ctx) => {
     if (state == 'addProducts' || state == 'removeProducts') {
-        state = 'shopping'
-
         let rows = ctx.message.text.replace("'", "").split('\n')
         let str = 'Cannot add or remove products'
 
