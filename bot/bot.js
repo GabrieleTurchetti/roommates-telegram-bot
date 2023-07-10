@@ -3,20 +3,16 @@ const inlineKeyboards = require('./inline_keyboards').inlineKeyboards
 const conn = require('./connection').conn
 const fs = require('fs')
 const axios = require('axios')
+const bot = new Telegraf('') // insert the bot token
 
-const bot = new Telegraf('') //insert the bot token
-
-
-//global variables
+// global variables
 let state = 'start'
 let globalFolderName = ''
 let globalFileName = ''
 
-
-//general methods
+// general methods
 bot.start((ctx) => {
     state = 'start'
-
     ctx.reply('Roommates bot', {reply_markup: inlineKeyboards.start})
 })
 
@@ -85,7 +81,6 @@ bot.on('text', (ctx) => {
 bot.on('document', (ctx) => {
     if (state == 'addLight' || state == 'addGas' || state == 'addWater' || state == 'addInternet' ) {
         state = 'addBills'
-
         const fileId = ctx.update.message.document.file_id
         const fileName = ctx.update.message.document.file_name
 
@@ -98,51 +93,43 @@ bot.on('document', (ctx) => {
                 ctx.reply('Files added')
             })
         }).catch(() => ctx.reply('Cannot add files'))
-}
+    }
 })
 
 bot.action('sure', (ctx) => {
     state = 'sure'
-    
     ctx.answerCbQuery()
 })
 
 bot.action('returnStart', (ctx) => {
     state = 'start'
-
     ctx.answerCbQuery()
     ctx.editMessageText('Roommates bot', {reply_markup: inlineKeyboards.start})
 })
 
 bot.action('returnBills', (ctx) => {
     state = 'bills'
-
     ctx.answerCbQuery()
     ctx.editMessageText('Bills', {reply_markup: inlineKeyboards.bills})
 })
 
 bot.action('returnRemoveBills', (ctx) => {
     state = 'removeBills'
-
     ctx.answerCbQuery()
     ctx.editMessageReplyMarkup(inlineKeyboards.removeBills)
 })
 
 bot.action('returnShowBills', (ctx) => {
     state = 'showBills'
-
     ctx.answerCbQuery()
     ctx.editMessageReplyMarkup(inlineKeyboards.showBills)
 })
 
-
-//shifts method
-//to ensure an optimal cycle of shifts the number of roommates and rooms must be coprime
+// shifts method
+// to ensure an optimal cycle of shifts the number of roommates and rooms must be coprime
 bot.action('shifts', (ctx) => {
     state = 'shifts'
-
     ctx.answerCbQuery()
-
     const date1 = new Date()
     const date2 = new Date('01/01/2022')
     const difference = date1.getTime() - date2.getTime()
@@ -171,34 +158,28 @@ bot.action('shifts', (ctx) => {
     ctx.reply(`Today ${getName(totalDays)} has to clean ${getRoom(totalDays)}`)
 })
 
-
-//shopping methods
+// shopping methods
 bot.action('shopping', (ctx) => {
     state = 'shoppping'
-
     ctx.answerCbQuery()
     ctx.editMessageText('Shopping', {reply_markup: inlineKeyboards.shopping})
 })
 
 bot.action('addProducts', (ctx) => {
     state = 'addProducts'
-
     ctx.answerCbQuery()
     ctx.reply('Insert:\nName - quantity')
 })
 
 bot.action('removeProducts', (ctx) => {
     state = 'removeProducts'
-
     ctx.answerCbQuery()
     ctx.reply('Remove:\nName - quantity')
 })
 
 bot.action('showProducts', (ctx) => {
     state = 'showProducts'
-
     ctx.answerCbQuery()
-
     const sql = 'select * from products'
 
     conn.query(sql, function (err, result) {
@@ -218,17 +199,14 @@ bot.action('showProducts', (ctx) => {
 
 bot.action('deleteList', (ctx) => {
     state = 'deleteList'
-
     ctx.answerCbQuery()
     ctx.editMessageReplyMarkup(inlineKeyboards.sureDeleteList)
 })
 
 bot.action('yesDeleteList', (ctx) => {
     state = 'yesDeleteList'
-
     ctx.answerCbQuery()
     ctx.editMessageReplyMarkup(inlineKeyboards.shopping)
-
     const sql = 'delete from products'
 
     conn.query(sql, function (err, result) {
@@ -242,7 +220,6 @@ bot.action('yesDeleteList', (ctx) => {
 
 bot.action('noDeleteList', (ctx) => {
     state = 'noDeleteList'
-    
     ctx.answerCbQuery()
     ctx.editMessageReplyMarkup(inlineKeyboards.shopping)
 })
@@ -251,31 +228,28 @@ bot.action('noDeleteList', (ctx) => {
 //bills methods
 bot.action('bills', (ctx) => {
     state = 'bills'
-
     ctx.answerCbQuery()
     ctx.editMessageText('Bills', {reply_markup: inlineKeyboards.bills})
 })
 
 bot.action('addBills', (ctx) => {
     state = 'addBills'
-
     ctx.answerCbQuery()
     ctx.editMessageText('Add bils', {reply_markup: inlineKeyboards.addBills})
 })
 
 bot.action('removeBills', (ctx) => {
     state = 'removeBills'
-
     ctx.answerCbQuery()
     ctx.editMessageText('Remove bills', {reply_markup: inlineKeyboards.removeBills})
 })
 
-//the button property contains the string that will be displayed in the inline keyboard
-//the path property contains the name of the folder where the files will be saved
+// the button property contains the string that will be displayed in the inline keyboard
+// the path property contains the name of the folder where the files will be saved
 const billsTypes = [
     {button: 'Light', path: ''},
     ...
-] //insert all bill types
+] // insert all bill types
 
 function getFileNames(pathName) {
     let fileNames = fs.readdirSync(`./bills/${pathName}`)
@@ -322,14 +296,12 @@ function billsFunc() {
             bot.action(`remove${fileName}`, (ctx) => {
                 state = `remove${fileName}`
                 globalFileName = fileName
-
                 ctx.answerCbQuery()
                 ctx.editMessageReplyMarkup(inlineKeyboards.sureRemoveBill)
             })
 
             bot.action(`show${fileName}`, (ctx) => {
                 state = `show${fileName}`
-                
                 ctx.answerCbQuery()
                 ctx.replyWithDocument({source: `./bills/${globalFolderName}/${fileName}`})
             })
@@ -338,7 +310,6 @@ function billsFunc() {
         bot.action(`add${billsTypes[i].button}`, (ctx) => {
             state = `add${billsTypes[i].button}`
             globalFolderName = billsTypes[i].path
-    
             ctx.answerCbQuery()
             ctx.reply('Invia il file:')
         })
@@ -346,7 +317,6 @@ function billsFunc() {
         bot.action(`remove${billsTypes[i].button}`, (ctx) => {
             state = `remove${billsTypes[i].button}`
             globalFolderName = billsTypes[i].path
-            
             ctx.answerCbQuery()
             ctx.editMessageReplyMarkup({inline_keyboard: removeBillsInlineKeyboard(billTypes[i].path)})
         })
@@ -354,7 +324,6 @@ function billsFunc() {
         bot.action(`show${billsTypes[i].english}`, (ctx) => {
             state = `show${billsTypes[i].english}`
             globalFolderName = billsTypes[i].other
-            
             ctx.answerCbQuery()
             ctx.editMessageReplyMarkup({inline_keyboard: showBillsInlineKeyboard(billTypes[i].other)})
         })
@@ -363,9 +332,7 @@ function billsFunc() {
 
 bot.action('yesRemoveBill', (ctx) => {
     state = 'yesRemoveBill'
-
     fs.unlinkSync(`./bills/${globalFolderName}/${globalFileName}`)
-
     ctx.answerCbQuery()
     ctx.reply('File deleted')
     ctx.editMessageReplyMarkup({inline_keyboard: removeBillsInlineKeyboard(globalFolderName)})
@@ -373,21 +340,17 @@ bot.action('yesRemoveBill', (ctx) => {
 
 bot.action('noRemoveBill', (ctx) => {
     state = 'noRemoveBill'
-
     ctx.answerCbQuery()
     ctx.editMessageReplyMarkup({inline_keyboard: removeBillsInlineKeyboard(globalFolderName)})
 })
 
 bot.action('showBills', (ctx) => {
     state = 'showBills'
-
     ctx.answerCbQuery()
     ctx.editMessageText('Show bills', {reply_markup: inlineKeyboards.showBills})
 })
 
 billsFunc()
-
 bot.launch()
-
 process.once('SIGINT', () => bot.stop('SIGINT'))
 process.once('SIGTERM', () => bot.stop('SIGTERM'))
