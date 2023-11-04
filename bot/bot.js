@@ -225,7 +225,7 @@ bot.action('noDeleteList', (ctx) => {
 })
 
 
-//bills methods
+// bills methods
 bot.action('bills', (ctx) => {
     state = 'bills'
     ctx.answerCbQuery()
